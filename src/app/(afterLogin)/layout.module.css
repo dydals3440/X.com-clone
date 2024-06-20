@@ -13,7 +13,6 @@
 }
 
 .leftSection {
-  background-color: orange;
   width: 275px;
   /* padding:0 8px; */
   height: 100dvh;
@@ -23,14 +22,25 @@
   position: fixed;
   /* width: 275px; 부모랑 자식이랑 값이 똑같으면 inherit */
   /* fixed: 100%하면 부모의 100%를 잘 안갖고옴. */
-  background-color: orange;
   width: inherit;
   height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.leftSectionFixed nav {
+  /* 부모가 column이면 세로로 길어짐 */
+  /* 부모가 row면 가로로 최대한 길어짐 */
+  flex: 1;
+}
+
+.leftSectionFixed nav li {
+  list-style-type: none;
 }
 
 .logo {
   display: inline-block;
-  height: 57px;
+  height: 56px;
   margin-top: 2px;
 }
 
@@ -45,6 +55,26 @@
 
 .logoPill:hover {
   background-color: rgba(15, 20, 25, 0.1);
+}
+
+.postButton {
+  margin: 16px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 52px;
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 8px 28px;
+  background-color: rgb(29, 155, 240);
+  width: 234px;
+  border: none;
+  color: rgb(255, 255, 255);
+  font-weight: 700;
+  font-size: 17px;
+  border-radius: 26px;
+}
+
+.postButton:hover {
+  background-color: rgb(26, 140, 216);
 }
 
 .rightSectionWrapper {
