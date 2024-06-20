@@ -1,3 +1,6 @@
-export default function Home() {
-	return <main>게시글</main>;
+import Home from '../../home/page';
+
+export default function Page() {
+	// 뒤에 배경화면
+	return <Home />;
 }
