@@ -87,7 +87,6 @@
 }
 
 .rightSectionInner {
-  background-color: aqua;
   height: 100%;
   width: 990px;
   display: flex;
@@ -98,11 +97,10 @@
   width: 600px;
   /* position: fixed 테스트 위해 
   height: 120dvh */
-  height:120dvh;
+  height: 200dvh;
 }
 
 .rightSection {
-  background-color: blue;
   width: 350px;
   height: 100%;
 }
@@ -131,4 +129,17 @@
   padding: 12px;
   margin-left: 5px;
   font-size: 15px;
+}
+
+.followRecommend {
+  font-size: 20px;
+  font-weight: bold;
+  background-color: rgb(247, 249, 249);
+  border-radius: 16px;
+  margin: 12px 0;
+  padding: 12px 16px;
+}
+
+.followRecommend h3 {
+  padding-bottom: 12px;
 }
