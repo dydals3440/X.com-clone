@@ -28,7 +28,8 @@ export default function PostArticle({ children, post }: Props) {
 	};
 
 	return (
-		<article onClick={onClick} className={style.post}>
+		// onClickCapture를 통해 이벤트 캡처링 가능, 이밴트 캡처링시,
+		<article onClickCapture={onClick} className={style.post}>
 			{children}
 		</article>
 	);

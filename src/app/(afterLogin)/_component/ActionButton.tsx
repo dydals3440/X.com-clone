@@ -15,12 +15,14 @@ export default function ActionButtons({ white }: Props) {
 	const onClickComment = () => {};
 	const onClickRepost = () => {};
 	const onClickHeart = () => {};
+
 	return (
 		<div className={style.actionButtons}>
 			<div
 				className={cx(
 					style.commentButton,
 					{ [style.commented]: commented },
+					// white props가 있는경우 style.white
 					white && style.white,
 				)}
 			>
