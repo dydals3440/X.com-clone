@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import React from 'react';
+import { MSWProvider } from './_component/MSWProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -17,6 +18,7 @@ export default function RootLayout({ children }: Props) {
 	return (
 		<html lang="en">
 			<body className={inter.className}>
+				<MSWProvider />
 				<div>{children}</div>
 			</body>
 		</html>
