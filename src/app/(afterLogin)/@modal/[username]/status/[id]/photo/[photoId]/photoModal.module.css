@@ -15,12 +15,14 @@
   display: flex;
   flex-direction: column;
 }
+
 .imageZone .image {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
   flex: 1;
 }
+
 .imageZone img {
   display: none;
 }
@@ -31,6 +33,7 @@
   justify-content: center;
   align-items: center;
 }
+
 .buttonInner {
   width: 600px;
   height: 60px;
@@ -57,9 +60,11 @@
   align-items: center;
   justify-content: center;
 }
+
 .closeButton svg {
   fill: white;
 }
+
 .closeButton:hover {
   background-color: rgba(25,25,25, 0.75);
 }
