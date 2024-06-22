@@ -1,36 +1,45 @@
-.container {
-  display: flex;
-  align-items: stretch;
-  background-color: #fff;
-}
+.container { 
+  display: flex; 
+  align-items: stretch; 
+  background-color: #fff; 
+} 
 
-.leftSectionWrapper {
-  display: flex;
-  align-items: flex-end;
-  flex-direction: column;
-  /*  */
-  flex-grow: 1;
-}
+.leftSectionWrapper { 
+  display: flex; 
+  align-items: flex-end; 
+  flex-direction: column; 
+  /*  */ flex-grow: 1; 
+} 
 
-.leftSection {
-  width: 275px;
-  /* padding:0 8px; */
-  height: 100dvh;
-}
+.leftSection { 
+  width: 72px; 
+  /* padding:0 8px; */ 
+  height: 100dvh; 
+} 
 
-.leftSectionFixed {
-  position: fixed;
+.leftSectionFixed { 
+  position: fixed; 
   /* width: 275px; 부모랑 자식이랑 값이 똑같으면 inherit */
-  /* fixed: 100%하면 부모의 100%를 잘 안갖고옴. */
-  width: inherit;
-  height: 100dvh;
-  display: flex;
-  flex-direction: column;
+   /* fixed: 100%하면 부모의 100%를 잘 안갖고옴. */
+    width: inherit; 
+    padding: 0 8px; 
+    height: 100dvh; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+}
+
+@media all and (min-width: 1300px) {
+  .leftSection {
+      width: 275px;
+  }
+  .leftSectionFixed {
+      align-items: flex-start;
+  }
+
 }
 
 .leftSectionFixed nav {
-  /* 부모가 column이면 세로로 길어짐 */
-  /* 부모가 row면 가로로 최대한 길어짐 */
   flex: 1;
 }
 
@@ -47,14 +56,14 @@
 .logoPill {
   width: 50px;
   height: 50px;
-  border-radius: 25px;
+  border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .logoPill:hover {
-  background-color: rgba(15, 20, 25, 0.1);
+  background-color: rgba(15,20,25, 0.1);
 }
 
 .postButton {
@@ -62,19 +71,45 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 52px;
   box-shadow: rgba(0, 0, 0, 0.08) 0px 8px 28px;
   background-color: rgb(29, 155, 240);
-  width: 234px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
   border: none;
   color: rgb(255, 255, 255);
   font-weight: 700;
   font-size: 17px;
-  border-radius: 26px;
 }
 
 .postButton:hover {
   background-color: rgb(26, 140, 216);
+}
+
+.postButton span {
+  display: none;
+}
+
+.postButton svg {
+  display: inline-block;
+  fill: white;
+  width: 24px;
+}
+
+@media all and (min-width: 1300px) {
+  .postButton {
+      height: 52px;
+      width: 234px;
+      border-radius: 26px;
+  }
+
+  .postButton span {
+      display: inline-block;
+  }
+
+  .postButton svg {
+      display: none;
+  }
 }
 
 .rightSectionWrapper {
@@ -82,53 +117,195 @@
   align-items: flex-start;
   height: 100dvh;
   flex-direction: column;
-    /* 양 쪽을 가운데정렬 하는 방법  */
   flex-grow: 1;
+}
+
+.rightSection {
+  display: none;
 }
 
 .rightSectionInner {
   height: 100%;
-  width: 990px;
+  width: 600px;
   display: flex;
   justify-content: space-between;
 }
 
+@media all and (min-width: 1024px) {
+  .rightSection {
+      display: inline-block;
+      width: 350px;
+      height: 100%;
+  }
+
+  .rightSectionInner {
+      width: 990px;
+  }
+}
+
 .main {
   width: 600px;
-  /* position: fixed 테스트 위해 
-  height: 120dvh */
   height: 200dvh;
 }
 
-.rightSection {
-  width: 350px;
-  height: 100%;
+.followRecommend {
+  font-size: 20px;
+  font-weight: bold;
+  background-color: rgb(247, 249, 249);
+  border-radius: 16px;
+  margin: 12px 0;
+  padding: 12px 16px;
 }
 
-.search {
-  position: fixed;
-  height: 42px;
-  width: inherit;
-  border-radius: 21px;
-  background-color: rgb(239, 243, 244);
-  margin-top: 6px;
-  margin-bottom: 12px;
+.followRecommend h3 {
+  padding-bottom: 12px;
+}
+
+.container {
   display: flex;
+  align-items: stretch;
+  background-color: #fff;
+}
+
+.leftSectionWrapper {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.leftSection {
+  width: 72px;
+  height: 100dvh;
+}
+
+.leftSectionFixed {
+  position: fixed;
+  width: inherit;
+  padding: 0 8px;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
   align-items: center;
 }
 
-.search svg {
-  margin-left: 20px;
-  fill: rgb(83, 100, 113);
+@media all and (min-width: 1300px) {
+  .leftSection {
+      width: 275px;
+  }
+  .leftSectionFixed {
+      align-items: flex-start;
+  }
+
 }
 
-.search input {
-  outline: none;
-  background-color: inherit;
+.leftSectionFixed nav {
+  flex: 1;
+}
+
+.leftSectionFixed nav li {
+  list-style-type: none;
+}
+
+.logo {
+  display: inline-block;
+  height: 56px;
+  margin-top: 2px;
+}
+
+.logoPill {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.logoPill:hover {
+  background-color: rgba(15,20,25, 0.1);
+}
+
+.postButton {
+  margin: 16px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: rgba(0, 0, 0, 0.08) 0px 8px 28px;
+  background-color: rgb(29, 155, 240);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
   border: none;
-  padding: 12px;
-  margin-left: 5px;
-  font-size: 15px;
+  color: rgb(255, 255, 255);
+  font-weight: 700;
+  font-size: 17px;
+}
+
+.postButton:hover {
+  background-color: rgb(26, 140, 216);
+}
+
+.postButton span {
+  display: none;
+}
+
+.postButton svg {
+  display: inline-block;
+  fill: white;
+  width: 24px;
+}
+
+@media all and (min-width: 1300px) {
+  .postButton {
+      height: 52px;
+      width: 234px;
+      border-radius: 26px;
+  }
+
+  .postButton span {
+      display: inline-block;
+  }
+
+  .postButton svg {
+      display: none;
+  }
+}
+
+.rightSectionWrapper {
+  display: flex;
+  align-items: flex-start;
+  height: 100dvh;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.rightSection {
+  display: none;
+}
+
+.rightSectionInner {
+  height: 100%;
+  width: 600px;
+  display: flex;
+  justify-content: space-between;
+}
+
+@media all and (min-width: 1024px) {
+  .rightSection {
+      display: inline-block;
+      width: 350px;
+      height: 100%;
+  }
+
+  .rightSectionInner {
+      width: 990px;
+  }
+}
+
+.main {
+  width: 600px;
+  height: 200dvh;
 }
 
 .followRecommend {
