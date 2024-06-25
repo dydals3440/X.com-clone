@@ -1,5 +1,4 @@
 import { http, HttpResponse, StrictResponse } from 'msw';
-import { faker } from '@faker-js/faker';
 
 export const handlers = [
 	http.post('/api/login', () => {

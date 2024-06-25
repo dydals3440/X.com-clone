@@ -6,6 +6,8 @@ import cx from 'classnames';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/ko';
 import dayjs from 'dayjs';
+import WebSocketComponent from '@/app/_component/WebSocketProvider';
+import Room from '../_component/Room';
 
 dayjs.locale('ko');
 dayjs.extend(relativeTime);
@@ -35,48 +37,16 @@ export default function ChatRoom() {
 
 	return (
 		<main className={style.main}>
+			<WebSocketComponent />
 			<div className={style.header}>
-				<BackButton />
-				<div>
-					<h2>{user.nickname}</h2>
-				</div>
+				<h3>쪽지</h3>
 			</div>
-			<Link href={user.nickname} className={style.userInfo}>
-				<img src={user.image} alt={user.id} />
-				<div>
-					<b>{user.nickname}</b>
-				</div>
-				<div>@{user.id}</div>
-			</Link>
-			<div className={style.list}>
-				{messages.map(m => {
-					if (m.id === 'zerohch0') {
-						// 내 메시지면
-						return (
-							<div
-								key={m.messageId}
-								className={cx(style.message, style.myMessage)}
-							>
-								<div className={style.content}>{m.content}</div>
-								<div className={style.date}>
-									{dayjs(m.createdAt).format('YYYY년 MM월 DD일 A HH시 mm분')}
-								</div>
-							</div>
-						);
-					}
-					return (
-						<div
-							key={m.messageId}
-							className={cx(style.message, style.yourMessage)}
-						>
-							<div className={style.content}>{m.content}</div>
-							<div className={style.date}>
-								{dayjs(m.createdAt).format('YYYY년 MM월 DD일 A HH시 mm분')}
-							</div>
-						</div>
-					);
-				})}
-			</div>
+			<Room />
+			<Room />
+			<Room />
+			<Room />
+			<Room />
+			<Room />
 		</main>
 	);
 }

@@ -9,6 +9,11 @@ export default function Home() {
 				<h3>쪽지</h3>
 			</div>
 			<Room />
+			<Room />
+			<Room />
+			<Room />
+			<Room />
+			<Room />
 		</main>
 	);
 }
