@@ -25,4 +25,11 @@ export const handlers = [
 			},
 		});
 	}),
+	http.post('/api/users', async () => {
+		return HttpResponse.text(JSON.stringify('ok'), {
+			headers: {
+				'Set-Cookie': 'connect.sid=msw-cookie;HttpOnly;Path=/;Max-Age=0',
+			},
+		});
+	}),
 ];
