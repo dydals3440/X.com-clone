@@ -1,5 +1,7 @@
 'use server';
 
+// 서버는 @/auth
+import { signIn } from '@/auth';
 import { redirect } from 'next/navigation';
 
 // 서버 코드는 클라이언트상에 노출이 안되므로 비밀키 써도 무방.
@@ -36,12 +38,15 @@ export default async (prevState: any, formData: FormData) => {
 				credentials: 'include',
 			},
 		);
-		console.log(response.status);
 		if (response.status === 403) {
 			return { message: 'user-exists' };
 		}
-		console.log(await response.json());
 		shouldRedirect = true;
+		await signIn('credentials', {
+			username: formData.get('id'),
+			password: formData.get('password'),
+			redirect: false,
+		});
 	} catch (err) {
 		console.error(err);
 		return;

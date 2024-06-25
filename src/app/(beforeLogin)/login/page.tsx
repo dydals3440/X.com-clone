@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import Main from '../_component/Main';
+import { useSession } from 'next-auth/react';
 
 // login => i/flow/login으로 넘어가게 하고 싶은데, 서버쪽이기 떄문에 클라이언트에서
 // 동작 X
@@ -13,6 +14,12 @@ import Main from '../_component/Main';
 
 export default function Login() {
 	const router = useRouter();
+	const { data: session } = useSession();
+
+	if (session?.user) {
+		router.replace('/home');
+		return null;
+	}
 	router.replace('/i/flow/login');
 	// /login 페이지로 가면, 빈 화면이 나올 꺼임.
 	// 배경화면을 만들어줘야함.
