@@ -14,7 +14,5 @@ export default function FollowingPosts() {
 		gcTime: 300 * 1000,
 	});
 
-	console.log(data);
-
 	return data?.map(post => <Post key={post.postId} post={post} />);
 }
