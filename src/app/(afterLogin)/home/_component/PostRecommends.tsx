@@ -18,8 +18,18 @@ export default function PostRecommends() {
 		// Stale Time < GcTime (s:5분, gc:3분 5분동안에는 같은 캐시데이터를 새로 불러오지 않고 재사용 하기 위함)
 		// inactive시 gc타임이 돔, inactive일떄는 3분뒤에 캐시가 사라짐
 		// staleTime을 5분으로 해놓은, 이유가 퇴색됨.
-		gcTime: 30 * 1000,
+		gcTime: 300 * 1000,
+		// 초기데이터가 있고 초기데이터로 되돌릴 수 있을 떄 reset을 사용
+		// initialData: () => [],
 	});
 
 	return data?.map(post => <Post key={post.postId} post={post} />);
 }
+
+// refetch는 무조건 데이터를 다시 가져옴
+// invalidate는 inactive일 떄는 안가져오고, 지금 현재 화면에서 데이터를 쓰고 있을 떄만
+// 가져오는 것. 무조건 invalidate를 쓰면 되지않냐 생각
+// refetch 쓸 수 있음. 화면에 안보여도 그 데이터가 필요할 수 있음.
+// 다른 컴포넌트에서 전역적으로 공유하는애들은, 필요로함 refetch가.
+
+// reset의 조건 initialData

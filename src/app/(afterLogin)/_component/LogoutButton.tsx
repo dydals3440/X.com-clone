@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation';
 export default function LogoutButton() {
 	const router = useRouter();
 	const { data: me } = useSession();
-	console.log('me', me);
 	// const me = {
 	// 	// 임시로 내 정보 있는것처럼
 	// 	id: 'zerohch0',

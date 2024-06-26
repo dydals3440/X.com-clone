@@ -6,12 +6,15 @@ import { TabContext } from './TabProvider';
 
 export default function Tab() {
 	const { tab, setTab } = useContext(TabContext);
+
 	const onClickRec = () => {
 		setTab('rec');
 	};
+
 	const onClickFol = () => {
 		setTab('fol');
 	};
+
 	return (
 		<div className={style.homeFixed}>
 			<div className={style.homeText}>홈</div>
