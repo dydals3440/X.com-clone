@@ -5,12 +5,13 @@ export async function getFollowRecommends() {
 		},
 		cache: 'no-store',
 	});
+	// The return value is *not* serialized
+	// You can return Date, Map, Set, etc.
 
 	if (!res.ok) {
-		throw new Error('Failed to fetch Data');
+		// This will activate the closest `error.js` Error Boundary
+		throw new Error('Failed to fetch data');
 	}
-
-	console.log(res);
 
 	return res.json();
 }
