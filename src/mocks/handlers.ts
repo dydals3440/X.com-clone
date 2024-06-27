@@ -226,6 +226,7 @@ export const handlers = [
 	}),
 	http.get('/api/users/:userId', ({ request, params }): StrictResponse<any> => {
 		const { userId } = params;
+		// 유저 정보를 찾고 없으면
 		const found = User.find(v => v.id === userId);
 		if (found) {
 			return HttpResponse.json(found);
