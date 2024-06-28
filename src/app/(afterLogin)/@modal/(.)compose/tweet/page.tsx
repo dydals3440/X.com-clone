@@ -1,7 +1,9 @@
 'use client';
 
+import { useSession } from 'next-auth/react';
 import style from './modal.module.css';
 import { useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 // 탐색하기에서도 게시하기 버튼을 눌럿을떄, 해당 모달은 탐색하기 위에서 떠야함.
 // 안뜨는 이유는 인터셉팅(.)라우트 처리르 안해줘서 그럼.
@@ -9,16 +11,16 @@ import { useRef, useState } from 'react';
 export default function TweetModal() {
 	const [content, setContent] = useState();
 	const imageRef = useRef<HTMLInputElement>(null);
+	const router = useRouter();
+
 	const onSubmit = () => {};
-	const onClickClose = () => {};
+	const onClickClose = () => {
+		router.back();
+	};
 	const onClickButton = () => {};
 	const onChangeContent = () => {};
 
-	const me = {
-		id: 'zerohch0',
-		image: '/5Udwvqim.jpg',
-	};
-
+	const { data: me } = useSession();
 	return (
 		<div className={style.modalBackground}>
 			<div className={style.modal}>
@@ -38,7 +40,10 @@ export default function TweetModal() {
 					<div className={style.modalBody}>
 						<div className={style.postUserSection}>
 							<div className={style.postUserImage}>
-								<img src={me.image} alt={me.id} />
+								<img
+									src={me?.user?.image as string}
+									alt={me?.user?.email as string}
+								/>
 							</div>
 						</div>
 						<div className={style.inputDiv}>

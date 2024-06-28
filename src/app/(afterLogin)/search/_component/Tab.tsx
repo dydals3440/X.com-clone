@@ -11,13 +11,26 @@ export default function Tab() {
 
 	const onClickHot = () => {
 		setCurrent('hot');
-		router.replace(`/search?q=${searchParams.get('q')}`);
+		let url = `/search?q=${searchParams.get('q')}`;
+
+		// has라고 하면 true/false, get은 pf
+		if (searchParams.has('pf')) {
+			url += `&pf=${searchParams.get('pf')}`;
+		}
+
+		router.replace(url);
 	};
 
 	const onClickNew = () => {
 		setCurrent('new');
-		// searchParams.toString() => 지금있는 searchParam 그대로 다쓰고 뒤에 붙여라 쿼리스트링.
-		router.replace(`/search?${searchParams.toString()}&f=live`);
+		// searchParams.toString() => 지금있는 searchParam 그대로 다쓰고 뒤에 붙여라 쿼리스트링
+		let url = `/search?q=${searchParams.get('q')}&f=live`;
+
+		if (searchParams.has('pf')) {
+			url += `&pf=${searchParams.get('pf')}`;
+		}
+
+		router.replace(url);
 	};
 
 	return (

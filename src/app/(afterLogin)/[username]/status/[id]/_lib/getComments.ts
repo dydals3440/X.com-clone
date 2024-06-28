@@ -1,17 +1,16 @@
 import { QueryFunction } from '@tanstack/query-core';
 import { Post } from '@/model/Post';
 
-export const getSinglePost: QueryFunction<
-	Post,
-	[_1: string, id: string]
+export const getComments: QueryFunction<
+	Post[],
+	[_1: string, _2: string, _3: string]
 > = async ({ queryKey }) => {
 	const [_1, id] = queryKey;
-	const res = await fetch(`http://localhost:9090/api/posts/${id}`, {
+	const res = await fetch(`http://localhost:9090/api/posts/${id}/comments`, {
 		next: {
-			tags: ['posts', id],
+			tags: ['posts', id, 'comments'],
 		},
-		// 캐시 안하게 설정
-		// cache: 'no-store',
+		cache: 'no-store',
 	});
 	// The return value is *not* serialized
 	// You can return Date, Map, Set, etc.

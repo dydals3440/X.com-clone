@@ -8,9 +8,10 @@ import { getSinglePost } from '../_lib/getSinglePost';
 
 type Props = {
 	id: string;
+	noImage?: boolean;
 };
 
-export default function SinglePost({ id }: Props) {
+export default function SinglePost({ id, noImage }: Props) {
 	// Object는 객체가 아닌 모든 값임 (모든값이 다 된다는거), 객체는 object임.
 	const { data: post } = useQuery<
 		IPost,
@@ -42,5 +43,5 @@ export default function SinglePost({ id }: Props) {
 			</div>
 		);
 	}
-	return <Post key={post.postId} post={post} />;
+	return <Post key={post.postId} post={post} noImage />;
 }
