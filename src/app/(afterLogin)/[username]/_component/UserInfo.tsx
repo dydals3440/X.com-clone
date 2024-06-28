@@ -37,18 +37,7 @@ export default function UserInfo({ username }: Props) {
 						<div>@{username}</div>
 					</div>
 				</div>
-				<div
-					style={{
-						height: 100,
-						alignItems: 'center',
-						fontSize: 31,
-						fontWeight: 'bold',
-						justifyContent: 'center',
-						display: 'flex',
-					}}
-				>
-					계정이 존재하지 않음
-				</div>
+				<div className={style.noUserContainer}>계정이 존재하지 않음</div>
 			</>
 		);
 	}

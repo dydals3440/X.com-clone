@@ -81,6 +81,16 @@
   justify-content: center;
   cursor: pointer;
 }
+
 .backButton:hover {
   background-color: rgba(15, 20, 25, 0.1);
+}
+
+.noUserContainer {
+  height: 100px;
+  align-items: center;
+  font-size: 31;
+  font-weight: bold;
+  justify-content: center;
+  display: flex;
 }
