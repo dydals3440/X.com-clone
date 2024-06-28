@@ -11,26 +11,28 @@ export default function Tab() {
 
 	const onClickHot = () => {
 		setCurrent('hot');
-		let url = `/search?q=${searchParams.get('q')}`;
-
-		// has라고 하면 true/false, get은 pf
-		if (searchParams.has('pf')) {
-			url += `&pf=${searchParams.get('pf')}`;
-		}
-
-		router.replace(url);
+		// let url = `/search?q=${searchParams.get('q')}`;
+		// // has라고 하면 true/false, get은 pf
+		// if (searchParams.has('pf')) {
+		// 	url += `&pf=${searchParams.get('pf')}`;
+		// }
+		// router.replace(url);
+		const newSearchParams = new URLSearchParams(searchParams);
+		newSearchParams.delete('f');
+		router.replace(`/search?${newSearchParams.toString()}`);
 	};
 
 	const onClickNew = () => {
+		// // searchParams.toString() => 지금있는 searchParam 그대로 다쓰고 뒤에 붙여라 쿼리스트링
+		// let url = `/search?q=${searchParams.get('q')}&f=live`;
+		// if (searchParams.has('pf')) {
+		// 	url += `&pf=${searchParams.get('pf')}`;
+		// }
+		// router.replace(url);
 		setCurrent('new');
-		// searchParams.toString() => 지금있는 searchParam 그대로 다쓰고 뒤에 붙여라 쿼리스트링
-		let url = `/search?q=${searchParams.get('q')}&f=live`;
-
-		if (searchParams.has('pf')) {
-			url += `&pf=${searchParams.get('pf')}`;
-		}
-
-		router.replace(url);
+		const newSearchParams = new URLSearchParams(searchParams);
+		newSearchParams.set('f', 'live');
+		router.replace(`/search?${newSearchParams.toString()}`);
 	};
 
 	return (

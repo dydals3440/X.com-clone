@@ -10,19 +10,30 @@ export default function RightSearchZone() {
 	const searchParams = useSearchParams();
 
 	const onChangeFollow = () => {
-		let url = `/search?q=${searchParams.get('q')}&pf=on`;
-		if (searchParams.has('f')) {
-			url += `&f=${searchParams.get('f')}`;
-		}
-		router.replace(url);
+		// let url = `/search?q=${searchParams.get('q')}&pf=on`;
+		// if (searchParams.has('f')) {
+		// 	url += `&f=${searchParams.get('f')}`;
+		// }
+		// router.replace(url);
+		// searchParams 직접 만드는 방법
+		const newSearchParams = new URLSearchParams(searchParams);
+		newSearchParams.set('pf', 'on');
+		router.replace(`/search?${newSearchParams.toString()}`);
 	};
 
 	const onChangeAll = () => {
-		let url = `/search?q=${searchParams.get('q')}`;
-		if (searchParams.has('f')) {
-			url += `$f=${searchParams.get('f')}`;
-		}
-		router.replace(url);
+		// let url = `/search?q=${searchParams.get('q')}`;
+		// if (searchParams.has('f')) {
+		// 	url += `$f=${searchParams.get('f')}`;
+		// }
+		// router.replace(url);
+
+		// 새로운 방법
+		// 1. newSearchParams로 기존거 한번 복사한 다음.
+		// 기존의 useSearchParams는 readOnly라 수정을 못하기떄문.
+		const newSearchParams = new URLSearchParams(searchParams);
+		newSearchParams.delete('pf');
+		router.replace(`/search?${newSearchParams.toString()}`);
 	};
 
 	if (pathname === '/explore') {
