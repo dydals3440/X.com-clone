@@ -17,9 +17,10 @@ import TabDecider from './_component/TabDecider';
 export default async function Home() {
 	const queryClient = new QueryClient();
 	// 데이터 불러오기
-	await queryClient.prefetchQuery({
+	await queryClient.prefetchInfiniteQuery({
 		queryKey: ['posts', 'recommends'],
 		queryFn: getPostRecommends,
+		initialPageParam: 0,
 	});
 	// 데이터 불러오면 dehydrated
 	// dehydratedState를 react-query가 hydrate를 해야함.

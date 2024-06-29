@@ -1,16 +1,29 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import {
+	InfiniteData,
+	useInfiniteQuery,
+	useQuery,
+} from '@tanstack/react-query';
 import { getPostRecommends } from '../_lib/getPostRecommends';
 import Post from '@/app/(afterLogin)/_component/Post';
 import { Post as IPost } from '@/model/Post';
+import { Fragment } from 'react';
 
 export default function PostRecommends() {
 	// RQ Provider내부에서는 query 사용가능
-	const { data } = useQuery<IPost[]>({
+	const { data } = useInfiniteQuery<
+		IPost[],
+		Object,
+		InfiniteData<IPost[]>,
+		[_1: string, _2: string],
+		number
+	>({
 		queryKey: ['posts', 'recommends'],
 		queryFn: getPostRecommends,
 		// 1분동안은 항상 Fresh한 상태
+		initialPageParam: 0,
+		getNextPageParam: lastPage => lastPage.at(-1)?.postId,
 		staleTime: 60 * 1000,
 		// inactive 보는 화면에서, postRecommends를 안쓴다, 그러면 inActive가 된다.
 		// inactive 상태일 떄 gcTime이 돌아감, 5분 뒤에는 캐시에서 매번 데이터를 불러옴
@@ -23,7 +36,13 @@ export default function PostRecommends() {
 		// initialData: () => [],
 	});
 
-	return data?.map(post => <Post key={post.postId} post={post} />);
+	return data?.pages.map((page, idx) => (
+		<Fragment key={idx}>
+			{page.map(post => (
+				<Post key={post.postId} post={post} />
+			))}
+		</Fragment>
+	));
 }
 
 // refetch는 무조건 데이터를 다시 가져옴
