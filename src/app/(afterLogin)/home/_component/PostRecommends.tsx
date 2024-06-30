@@ -10,11 +10,22 @@ import Post from '@/app/(afterLogin)/_component/Post';
 import { Post as IPost } from '@/model/Post';
 import { Fragment, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
+import Loading from '../loading';
 
 export default function PostRecommends() {
 	// RQ Provider내부에서는 query 사용가능
 	// 다음페이지가 있는 경우 hasNextPage => true 없으면 false
-	const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery<
+	// 데이터를 아예 가져오지 않고, 데이터를 불러오는 순간 isFetching이 true가 된다. 그 순간 isLoading => true
+	// isLoading === isPending && isFetching
+	const {
+		data,
+		fetchNextPage,
+		hasNextPage,
+		isFetching,
+		isPending,
+		isLoading,
+		isError,
+	} = useInfiniteQuery<
 		IPost[],
 		Object,
 		InfiniteData<IPost[]>,
@@ -56,7 +67,13 @@ export default function PostRecommends() {
 		}
 	}, [inView, isFetching, hasNextPage, fetchNextPage]);
 
-	console.log(data);
+	if (isPending) {
+		return <Loading />;
+	}
+
+	if (isError) {
+		return '에러 처리해줘';
+	}
 
 	return (
 		<>
@@ -67,7 +84,7 @@ export default function PostRecommends() {
 					))}
 				</Fragment>
 			))}
-			<div ref={ref} style={{ height: 200, backgroundColor: 'red' }}></div>
+			<div ref={ref} style={{ height: 100 }}></div>
 		</>
 	);
 }
