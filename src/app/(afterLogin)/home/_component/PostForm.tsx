@@ -1,8 +1,11 @@
 'use client';
 
+import TextareaAutosize from 'react-textarea-autosize';
 import { ChangeEventHandler, FormEventHandler, useRef, useState } from 'react';
 import style from './postForm.module.css';
 import { Session } from '@auth/core/types';
+import { useQueryClient } from '@tanstack/react-query';
+import { Post } from '@/model/Post';
 
 type Props = {
 	me: Session | null;
@@ -10,7 +13,11 @@ type Props = {
 
 export default function PostForm({ me }: Props) {
 	const imageRef = useRef<HTMLInputElement>(null);
+	const [preview, setPreview] = useState<
+		Array<{ dataUrl: string; file: File } | null>
+	>([]);
 	const [content, setContent] = useState('');
+	const queryClient = useQueryClient();
 
 	// const { data: me } = useSession();
 
@@ -18,12 +25,88 @@ export default function PostForm({ me }: Props) {
 		setContent(e.target.value);
 	};
 
-	const onSubmit: FormEventHandler = e => {
+	const onSubmit: FormEventHandler = async e => {
 		e.preventDefault();
+		const formData = new FormData();
+		formData.append('content', content);
+		preview.forEach(p => {
+			p && formData.append('images', p.file);
+		});
+		try {
+			const response = await fetch(
+				`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts`,
+				{
+					method: 'post',
+					credentials: 'include',
+					body: formData,
+				},
+			);
+			if (response.status === 201) {
+				setContent('');
+				setPreview([]);
+				// InfiniteScroll에서 queryKey['posts', 'recommends']
+				const newPost = await response.json();
+				queryClient.setQueryData(
+					['posts', 'recommends'],
+					(prevData: { pages: Post[][] }) => {
+						// 리액트 불변셩 (immer가 더 쉬울수도)
+						const shallow = { ...prevData, pages: [...prevData.pages] };
+						shallow.pages[0] = [...shallow.pages[0]];
+						shallow.pages[0].unshift(newPost);
+						return shallow;
+					},
+				);
+				queryClient.setQueryData(
+					['posts', 'followings'],
+					(prevData: { pages: Post[][] }) => {
+						// 리액트 불변셩 (immer가 더 쉬울수도)
+						const shallow = { ...prevData, pages: [...prevData.pages] };
+						shallow.pages[0] = [...shallow.pages[0]];
+						shallow.pages[0].unshift(newPost);
+						return shallow;
+					},
+				);
+			}
+		} catch (err) {
+			alert('업로드 중 에러가 발생했습니다.');
+		}
 	};
 
 	const onClickButton = () => {
 		imageRef.current?.click();
+	};
+
+	const onRemoveImage = (index: number) => () => {
+		setPreview(prevPreview => {
+			const prev = [...prevPreview];
+			prev[index] = null;
+			return prev;
+		});
+	};
+
+	const onUpload: ChangeEventHandler<HTMLInputElement> = e => {
+		e.preventDefault();
+		if (e.target.files) {
+			// 하나의 파일마다
+			Array.from(e.target.files).forEach((file, index) => {
+				const reader = new FileReader();
+
+				reader.onloadend = () => {
+					setPreview(prevPreview => {
+						const prev = [...prevPreview];
+						prev[index] = {
+							dataUrl: reader.result as string,
+							file,
+						};
+						return prev;
+					});
+				};
+				// 데이터 URL을 읽음, 이게 끝나면 위의 onloadend가 호출
+				// dataURL은 이미지 데이터를 문자열로 나타낸 것 img src에 사용할 수 있다.
+				// 무조건 string으로 나오기에 arraybuffer타입을 뺌
+				reader.readAsDataURL(file);
+			});
+		}
 	};
 
 	return (
@@ -37,11 +120,33 @@ export default function PostForm({ me }: Props) {
 				</div>
 			</div>
 			<div className={style.postInputSection}>
-				<textarea
+				<TextareaAutosize
 					value={content}
 					onChange={onChange}
 					placeholder="무슨 일이 일어나고 있나요?"
 				/>
+				<div style={{ display: 'flex' }}>
+					{preview.map(
+						(v, index) =>
+							v && (
+								<div
+									key={index}
+									style={{ flex: 1 }}
+									onClick={onRemoveImage(index)}
+								>
+									<img
+										src={v.dataUrl}
+										alt="미리보기"
+										style={{
+											width: '100%',
+											objectFit: 'contain',
+											maxHeight: 100,
+										}}
+									/>
+								</div>
+							),
+					)}
+				</div>
 				<div className={style.postButtonSection}>
 					<div className={style.footerButtons}>
 						<div className={style.footerButtonLeft}>
@@ -51,6 +156,7 @@ export default function PostForm({ me }: Props) {
 								multiple
 								hidden
 								ref={imageRef}
+								onChange={onUpload}
 							/>
 							<button
 								className={style.uploadButton}
