@@ -1,10 +1,9 @@
 'use client';
 
 import style from '@/app/(beforeLogin)/_component/login.module.css';
-// 클라이언트 컴포넌트에서는 next-auth/react, 서버는 @auth
-import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import { ChangeEventHandler, FormEventHandler, useState } from 'react';
+import { redirect, useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 
 export default function LoginModal() {
 	const [id, setId] = useState('');
@@ -16,18 +15,22 @@ export default function LoginModal() {
 		e.preventDefault();
 		setMessage('');
 		try {
-			await signIn('credentials', {
+			const response = await signIn('credentials', {
 				username: id,
 				password,
 				redirect: false,
 			});
-			router.replace('/home');
+			console.log('response', response);
+			if (!response?.ok) {
+				setMessage('아이디와 비밀번호가 일치하지 않습니다.');
+			} else {
+				router.replace('/home');
+			}
 		} catch (err) {
 			console.error(err);
 			setMessage('아이디와 비밀번호가 일치하지 않습니다.');
 		}
 	};
-
 	const onClickClose = () => {
 		router.back();
 	};

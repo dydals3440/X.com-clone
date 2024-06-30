@@ -1,10 +1,10 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+import cookie from 'cookie';
 
 export const {
 	handlers: { GET, POST },
-	// middleware에 import로 연결
 	auth,
 	signIn,
 } = NextAuth({
@@ -12,16 +12,42 @@ export const {
 		signIn: '/i/flow/login',
 		newUser: '/i/flow/signup',
 	},
-	// callbacks라는 프로퍼티에서, 세션유무에 따른 처리를 할 수 있음
-	// 미들웨어에서 처리하는 방법이 더 좋음.
-	// callbacks: {
-	// 	async authorized({ request, auth }) {
-	// 		if (!auth) {
-	// 			return NextResponse.redirect(`http://localhost:3000/i/flow/login`);
-	// 		}
-	// 		return true;
-	// 	},
-	// },
+	callbacks: {
+		jwt({ token }) {
+			console.log('auth.ts jwt', token);
+			return token;
+		},
+		session({ session, newSession, user }) {
+			console.log('auth.ts session', session, newSession, user);
+			return session;
+		},
+	},
+	events: {
+		signOut(data) {
+			console.log(
+				'auth.ts events signout',
+				'session' in data && data.session,
+				'token' in data && data.token,
+			);
+			fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/logout`, {
+				method: 'POST',
+				credentials: 'include',
+			});
+			// if ('session' in data) {
+			//   data.session = null;
+			// }
+			// if ('token' in data) {
+			//   data.token = null;
+			// }
+		},
+		session(data) {
+			console.log(
+				'auth.ts events session',
+				'session' in data && data.session,
+				'token' in data && data.token,
+			);
+		},
+	},
 	providers: [
 		CredentialsProvider({
 			async authorize(credentials) {
@@ -38,14 +64,19 @@ export const {
 						}),
 					},
 				);
-
+				let setCookie = authResponse.headers.get('Set-Cookie');
+				console.log('set-cookie', setCookie);
+				if (setCookie) {
+					const parsed = cookie.parse(setCookie);
+					cookies().set('connect.sid', parsed['connect.sid'], parsed); // 브라우저에 쿠키를 심어주는 것
+				}
+				console.log(authResponse.ok, 'hoihihihihih');
 				if (!authResponse.ok) {
 					return null;
 				}
 
 				const user = await authResponse.json();
-				console.log(user);
-				// nickname => next의 UserType에 맞춰서 바꿔준 모습
+
 				return {
 					email: user.id,
 					name: user.nickname,

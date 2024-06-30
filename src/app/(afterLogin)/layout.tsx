@@ -17,6 +17,7 @@ type Props = { children: ReactNode; modal: ReactNode };
 
 export default async function AfterLoginLayout({ children, modal }: Props) {
 	const session = await auth();
+	console.log(session);
 	return (
 		<div className={style.container}>
 			<header className={style.leftSectionWrapper}>
@@ -46,7 +47,7 @@ export default async function AfterLoginLayout({ children, modal }: Props) {
 										</svg>
 									</Link>
 								</nav>
-								<LogoutButton />
+								<LogoutButton me={session} />
 							</>
 						)}
 					</div>
