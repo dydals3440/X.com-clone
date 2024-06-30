@@ -50,7 +50,7 @@ export const handlers = [
 	}),
 	http.get('/api/postRecommends', async ({ request }) => {
 		console.log('추천게시글');
-		await delay(3000);
+		await delay(1000);
 		console.log('딜레이 종료');
 		// SearchParams 불러오는 방법!
 		const url = new URL(request.url);

@@ -8,11 +8,13 @@ import {
 import { getPostRecommends } from '../_lib/getPostRecommends';
 import Post from '@/app/(afterLogin)/_component/Post';
 import { Post as IPost } from '@/model/Post';
-import { Fragment } from 'react';
+import { Fragment, useEffect } from 'react';
+import { useInView } from 'react-intersection-observer';
 
 export default function PostRecommends() {
 	// RQ Provider내부에서는 query 사용가능
-	const { data } = useInfiniteQuery<
+	// 다음페이지가 있는 경우 hasNextPage => true 없으면 false
+	const { data, fetchNextPage, hasNextPage, isFetching } = useInfiniteQuery<
 		IPost[],
 		Object,
 		InfiniteData<IPost[]>,
@@ -36,13 +38,38 @@ export default function PostRecommends() {
 		// initialData: () => [],
 	});
 
-	return data?.pages.map((page, idx) => (
-		<Fragment key={idx}>
-			{page.map(post => (
-				<Post key={post.postId} post={post} />
+	const { ref, inView } = useInView({
+		// 보이고나서, 몇 px 정도의 event가 호출 될 것 인가?
+		// div태그가 보이자마자, 바로 호출할 것이기 떄문 0
+		threshold: 0,
+		// 보인 후, 몇 초 후에 발생시킬것인지,
+		delay: 0,
+	});
+
+	// 화면에 안보이면 inView가 false
+
+	useEffect(() => {
+		if (inView) {
+			// isFetching은 데이터를 가져오는 순간
+			// 데이터의 중복을 방지 !isFetching
+			!isFetching && hasNextPage && fetchNextPage();
+		}
+	}, [inView, isFetching, hasNextPage, fetchNextPage]);
+
+	console.log(data);
+
+	return (
+		<>
+			{data?.pages.map((page, idx) => (
+				<Fragment key={idx}>
+					{page.map(post => (
+						<Post key={post.postId} post={post} />
+					))}
+				</Fragment>
 			))}
-		</Fragment>
-	));
+			<div ref={ref} style={{ height: 200, backgroundColor: 'red' }}></div>
+		</>
+	);
 }
 
 // refetch는 무조건 데이터를 다시 가져옴
