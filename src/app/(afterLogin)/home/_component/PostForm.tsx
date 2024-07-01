@@ -1,10 +1,16 @@
 'use client';
 
 import TextareaAutosize from 'react-textarea-autosize';
-import { ChangeEventHandler, FormEventHandler, useRef, useState } from 'react';
+import {
+	ChangeEventHandler,
+	FormEvent,
+	FormEventHandler,
+	useRef,
+	useState,
+} from 'react';
 import style from './postForm.module.css';
 import { Session } from '@auth/core/types';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Post } from '@/model/Post';
 
 type Props = {
@@ -19,57 +25,65 @@ export default function PostForm({ me }: Props) {
 	const [content, setContent] = useState('');
 	const queryClient = useQueryClient();
 
-	// const { data: me } = useSession();
-
-	const onChange: ChangeEventHandler<HTMLTextAreaElement> = e => {
-		setContent(e.target.value);
-	};
-
-	const onSubmit: FormEventHandler = async e => {
-		e.preventDefault();
-		const formData = new FormData();
-		formData.append('content', content);
-		preview.forEach(p => {
-			p && formData.append('images', p.file);
-		});
-		try {
-			const response = await fetch(
-				`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts`,
-				{
-					method: 'post',
-					credentials: 'include',
-					body: formData,
-				},
-			);
-			if (response.status === 201) {
-				setContent('');
-				setPreview([]);
-				// InfiniteScroll에서 queryKey['posts', 'recommends']
-				const newPost = await response.json();
+	const mutation = useMutation({
+		mutationFn: async (e: FormEvent) => {
+			e.preventDefault();
+			const formData = new FormData();
+			formData.append('content', content);
+			preview.forEach(p => {
+				p && formData.append('images', p.file);
+			});
+			return fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts`, {
+				method: 'post',
+				credentials: 'include',
+				body: formData,
+			});
+		},
+		// response: 결과, variable 처음에 mutationFn의 매개변수를 가져올 수 있음(파라미터),  context
+		//  context는 onMutate라고, 리턴해주는게 있을 수 있음. onMutate: {return 123} 이면 이걸 받아올 수 있음.
+		async onSuccess(response, variable, context) {
+			const newPost = await response.json();
+			setContent('');
+			setPreview([]);
+			if (queryClient.getQueryData(['posts', 'recommends'])) {
 				queryClient.setQueryData(
 					['posts', 'recommends'],
 					(prevData: { pages: Post[][] }) => {
-						// 리액트 불변셩 (immer가 더 쉬울수도)
-						const shallow = { ...prevData, pages: [...prevData.pages] };
-						shallow.pages[0] = [...shallow.pages[0]];
-						shallow.pages[0].unshift(newPost);
-						return shallow;
-					},
-				);
-				queryClient.setQueryData(
-					['posts', 'followings'],
-					(prevData: { pages: Post[][] }) => {
-						// 리액트 불변셩 (immer가 더 쉬울수도)
-						const shallow = { ...prevData, pages: [...prevData.pages] };
+						const shallow = {
+							...prevData,
+							pages: [...prevData.pages],
+						};
 						shallow.pages[0] = [...shallow.pages[0]];
 						shallow.pages[0].unshift(newPost);
 						return shallow;
 					},
 				);
 			}
-		} catch (err) {
+			// if로 check 해준 이유?
+			// cannot read properties of undefined (reading pages)
+			if (queryClient.getQueryData(['posts', 'followings'])) {
+				queryClient.setQueryData(
+					['posts', 'followings'],
+					(prevData: { pages: Post[][] }) => {
+						const shallow = {
+							...prevData,
+							pages: [...prevData.pages],
+						};
+						shallow.pages[0] = [...shallow.pages[0]];
+						shallow.pages[0].unshift(newPost);
+						return shallow;
+					},
+				);
+			}
+		},
+		onError(error) {
+			console.error(error);
 			alert('업로드 중 에러가 발생했습니다.');
-		}
+		},
+	});
+
+	const onChange: ChangeEventHandler<HTMLTextAreaElement> = e => {
+		setContent(e.target.value);
 	};
 
 	const onClickButton = () => {
@@ -87,10 +101,8 @@ export default function PostForm({ me }: Props) {
 	const onUpload: ChangeEventHandler<HTMLInputElement> = e => {
 		e.preventDefault();
 		if (e.target.files) {
-			// 하나의 파일마다
 			Array.from(e.target.files).forEach((file, index) => {
 				const reader = new FileReader();
-
 				reader.onloadend = () => {
 					setPreview(prevPreview => {
 						const prev = [...prevPreview];
@@ -101,16 +113,13 @@ export default function PostForm({ me }: Props) {
 						return prev;
 					});
 				};
-				// 데이터 URL을 읽음, 이게 끝나면 위의 onloadend가 호출
-				// dataURL은 이미지 데이터를 문자열로 나타낸 것 img src에 사용할 수 있다.
-				// 무조건 string으로 나오기에 arraybuffer타입을 뺌
 				reader.readAsDataURL(file);
 			});
 		}
 	};
 
 	return (
-		<form className={style.postForm} onSubmit={onSubmit}>
+		<form className={style.postForm} onSubmit={mutation.mutate}>
 			<div className={style.postUserSection}>
 				<div className={style.postUserImage}>
 					<img

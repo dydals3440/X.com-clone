@@ -19,12 +19,12 @@ type Props = {
 
 export default function Post({ noImage, post }: Props) {
 	const target = post;
-	console.log(target);
+	console.log(target, 'testest');
 	return (
 		<PostArticle post={target}>
 			<div className={style.postWrapper}>
 				<div className={style.postUserSection}>
-					<Link href={`/${target.User.id}`} className={style.postUserImage}>
+					<Link href={`/${target.User?.id}`} className={style.postUserImage}>
 						<img src={target.User.image} alt={target.User.nickname} />
 						<div className={style.postShade} />
 					</Link>
