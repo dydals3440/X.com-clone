@@ -7,6 +7,7 @@ type Props = { trend: Hashtag };
 export default function Trend({ trend }: Props) {
 	return (
 		<Link
+			key={trend.tagId}
 			href={`/search?q=${encodeURIComponent(trend.title)}`}
 			className={style.container}
 		>

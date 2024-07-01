@@ -13,7 +13,5 @@ export default function FollowRecommendSection() {
 		gcTime: 300 * 1000,
 	});
 
-	console.log('hi', data);
-
 	return data?.map(user => <FollowRecommend user={user} key={user.id} />);
 }
