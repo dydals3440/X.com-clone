@@ -1,14 +1,14 @@
-interface UserId {
-	userId: string;
+interface UserID {
+	id: string;
 }
 
 export interface User {
 	id: string;
 	nickname: string;
 	image: string;
-	Followers: UserId[];
+	Followers: UserID[];
 	_count: {
 		Followers: number;
-		followings: number;
+		Followings: number;
 	};
 }
