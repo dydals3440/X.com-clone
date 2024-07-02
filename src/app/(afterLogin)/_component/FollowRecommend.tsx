@@ -54,6 +54,7 @@ export default function FollowRecommend({ user }: Props) {
 				'users',
 				userId,
 			]);
+
 			if (value2) {
 				const shallow = {
 					...value2,

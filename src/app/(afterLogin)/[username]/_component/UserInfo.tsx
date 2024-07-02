@@ -1,10 +1,10 @@
 'use client';
 
-import BackButton from '../../_component/BackButton';
 import style from '@/app/(afterLogin)/[username]/profile.module.css';
-import { QueryClient, useMutation, useQuery } from '@tanstack/react-query';
+import BackButton from '@/app/(afterLogin)/_component/BackButton';
+import { useQuery, useQueryClient, useMutation } from '@tanstack/react-query';
 import { User } from '@/model/User';
-import { getUser } from '../_lib/getUser';
+import { getUser } from '@/app/(afterLogin)/[username]/_lib/getUser';
 import cx from 'classnames';
 import { MouseEventHandler } from 'react';
 import { Session } from '@auth/core/types';
@@ -13,20 +13,19 @@ type Props = {
 	username: string;
 	session: Session | null;
 };
-
 export default function UserInfo({ username, session }: Props) {
-	const queryClient = new QueryClient();
-	const {
-		data: user,
-		error,
-		isLoading,
-	} = useQuery<User, Object, User, [_1: string, _2: string]>({
+	const { data: user, error } = useQuery<
+		User,
+		Object,
+		User,
+		[_1: string, _2: string]
+	>({
 		queryKey: ['users', username],
 		queryFn: getUser,
-		staleTime: 60 * 1000,
+		staleTime: 60 * 1000, // fresh -> stale, 5분이라는 기준
 		gcTime: 300 * 1000,
 	});
-
+	const queryClient = useQueryClient();
 	const follow = useMutation({
 		mutationFn: (userId: string) => {
 			console.log('follow', userId);
@@ -210,8 +209,8 @@ export default function UserInfo({ username, session }: Props) {
 		},
 	});
 
+	console.log('error');
 	console.dir(error);
-
 	if (error) {
 		return (
 			<>
@@ -225,15 +224,21 @@ export default function UserInfo({ username, session }: Props) {
 						<div>@{username}</div>
 					</div>
 				</div>
-				<div className={style.noUserContainer}>계정이 존재하지 않음</div>
+				<div
+					style={{
+						height: 100,
+						alignItems: 'center',
+						fontSize: 31,
+						fontWeight: 'bold',
+						justifyContent: 'center',
+						display: 'flex',
+					}}
+				>
+					계정이 존재하지 않음
+				</div>
 			</>
 		);
 	}
-
-	if (isLoading) {
-	}
-
-	// 로딩 되기 전까지는  possibly undefined type error 방지
 	if (!user) {
 		return null;
 	}
@@ -259,21 +264,28 @@ export default function UserInfo({ username, session }: Props) {
 				<h3 className={style.headerTitle}>{user.nickname}</h3>
 			</div>
 			<div className={style.userZone}>
-				<div className={style.userImage}>
-					<img src={user.image} alt={user.id} />
+				<div className={style.userRow}>
+					<div className={style.userImage}>
+						<img src={user.image} alt={user.id} />
+					</div>
+					<div className={style.userName}>
+						<div>{user.nickname}</div>
+						<div>@{user.id}</div>
+					</div>
+					{user.id !== session?.user?.email && (
+						<button
+							onClick={onFollow}
+							className={cx(style.followButton, followed && style.followed)}
+						>
+							{followed ? '팔로잉' : '팔로우'}
+						</button>
+					)}
 				</div>
-				<div className={style.userName}>
-					<div>{user.nickname}</div>
-					<div>@{user.id}</div>
+				<div className={style.userFollower}>
+					<div>{user._count.Followers} 팔로워</div>
+					&nbsp;
+					<div>{user._count.Followings} 팔로우 중</div>
 				</div>
-				{user.id !== session?.user?.email && (
-					<button
-						onClick={onFollow}
-						className={cx(style.followButton, followed && style.followed)}
-					>
-						{followed ? '팔로잉' : '팔로우'}
-					</button>
-				)}
 			</div>
 		</>
 	);
