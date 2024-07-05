@@ -10,7 +10,7 @@ import {
 import { Post } from '@/model/Post';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-// import { useModalStore } from '@/store/modal';
+import { useModalStore } from '@/store/modal';
 
 type Props = {
 	white?: boolean;
@@ -20,7 +20,7 @@ export default function ActionButtons({ white, post }: Props) {
 	const queryClient = useQueryClient();
 	const { data: session } = useSession();
 	const router = useRouter();
-	// const modalStore = useModalStore();
+	const modalStore = useModalStore();
 
 	const reposted = !!post.Reposts?.find(v => v.userId === session?.user?.email);
 	const liked = !!post.Hearts?.find(v => v.userId === session?.user?.email);
@@ -268,6 +268,7 @@ export default function ActionButtons({ white, post }: Props) {
 
 	const repost = useMutation({
 		mutationFn: () => {
+			// 재게시에서는 formData를 사용하지 않음.
 			return fetch(
 				`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${post.postId}/reposts`,
 				{
@@ -277,6 +278,7 @@ export default function ActionButtons({ white, post }: Props) {
 			);
 		},
 		async onSuccess(response) {
+			// 성공하면 데이터는 아래에 담겨져 있음.
 			const data = await response.json();
 			const queryCache = queryClient.getQueryCache();
 			const queryKeys = queryCache.getAll().map(cache => cache.queryKey);
@@ -336,6 +338,7 @@ export default function ActionButtons({ white, post }: Props) {
 			return fetch(
 				`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${post.postId}/reposts`,
 				{
+					// delete는 그대로 그냥 삭제만 해주면 됨.
 					method: 'delete',
 					credentials: 'include',
 				},
@@ -411,9 +414,13 @@ export default function ActionButtons({ white, post }: Props) {
 	const onClickComment: MouseEventHandler<HTMLButtonElement> = e => {
 		e.stopPropagation();
 
-		// modalStore.setMode('comment');
-		// modalStore.setData(post);
+		modalStore.setMode('comment');
+		modalStore.setData(post);
+
 		router.push('/compose/tweet');
+		// action button -> compose tweet으로 상태를 보내야함
+		// 나는 지금 답글 달고 있고 답글 달려는 대상은 이거다.
+
 		// const formData = new FormData();
 		// formData.append('content', '답글 테스트');
 		// fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/posts/${post.postId}/comments`, {

@@ -1,4 +1,3 @@
-
 .modalBackground {
   width: 100vw;
   height: 100%;
@@ -46,6 +45,14 @@
   display: flex;
   flex-direction: column;
   flex: 1;
+}
+
+.modalOriginal {
+  padding: 0 16px 20px;
+  margin-top: 54px;
+  margin-bottom: -54px;
+  display: flex;
+  flex-direction: row;
 }
 
 .modalBody {

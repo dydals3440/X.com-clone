@@ -8,7 +8,7 @@ import Loading from './loading';
 import TabDeciderSuspense from './_component/TabDeciderSuspense';
 import { auth } from '@/auth';
 
-export const Metadata = {
+export const metadata = {
 	title: '홈 / Z',
 	description: '홈',
 };
