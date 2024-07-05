@@ -1,7 +1,6 @@
-import { QueryFunction } from '@tanstack/query-core';
-import { Post } from '@/model/Post';
+import { cookies } from 'next/headers';
 
-export const getSinglePost = async ({
+export const getSinglePostServer = async ({
 	queryKey,
 }: {
 	queryKey: [string, string];
@@ -12,8 +11,9 @@ export const getSinglePost = async ({
 			tags: ['posts', id],
 		},
 		credentials: 'include',
+		headers: { Cookie: cookies().toString() },
 		// 캐시 안하게 설정
-		// cache: 'no-store',
+		cache: 'no-store',
 	});
 	// The return value is *not* serialized
 	// You can return Date, Map, Set, etc.

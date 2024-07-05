@@ -1,11 +1,10 @@
-import { QueryFunction } from '@tanstack/react-query';
-import { User } from '@/model/User';
 import { cookies } from 'next/headers';
 
-export const getUserServer: QueryFunction<
-	User,
-	[_1: string, _2: string]
-> = async ({ queryKey }) => {
+export const getUserServer = async ({
+	queryKey,
+}: {
+	queryKey: [string, string];
+}) => {
 	const [_1, username] = queryKey;
 	const res = await fetch(
 		`${process.env.NEXT_PUBLIC_BASE_URL}/api/users/${username}`,
@@ -13,13 +12,9 @@ export const getUserServer: QueryFunction<
 			next: {
 				tags: ['users', username],
 			},
-			// getUser는 서버에서 실행할 떄, 페이지에서 프리페치 쿼리시 할 떄 서버에서 실행
 			credentials: 'include',
+			headers: { Cookie: cookies().toString() },
 			cache: 'no-store',
-			headers: {
-				// 서버에서 쓰일 떄는 쿠키를 못가져옴.
-				Cookie: cookies().toString(),
-			},
 		},
 	);
 	// The return value is *not* serialized

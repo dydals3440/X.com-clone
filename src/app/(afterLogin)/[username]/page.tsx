@@ -12,6 +12,17 @@ import { getUserPosts } from './_lib/getUserPosts';
 import UserInfo from './_component/UserInfo';
 import { auth } from '@/auth';
 import { getUserServer } from './_lib/getUserServer';
+import { User } from '@/model/User';
+
+export async function generateMetadata({ params }: Props) {
+	const user: User = await getUserServer({
+		queryKey: ['users', params.username],
+	});
+	return {
+		title: `${user.nickname} (${user.id})`,
+		description: `${user.nickname} (${user.id})`,
+	};
+}
 
 type Props = {
 	params: { username: string };

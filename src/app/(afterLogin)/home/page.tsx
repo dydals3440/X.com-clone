@@ -8,6 +8,11 @@ import Loading from './loading';
 import TabDeciderSuspense from './_component/TabDeciderSuspense';
 import { auth } from '@/auth';
 
+export const Metadata = {
+	title: '홈 / Z',
+	description: '홈',
+};
+
 export default async function Home() {
 	const session = await auth();
 	return (
