@@ -1,9 +1,11 @@
 'use client';
 
-import { signOut, useSession } from 'next-auth/react';
+import { signOut } from 'next-auth/react';
 import style from './logoutButton.module.css';
-import { useRouter } from 'next/navigation';
+
 import { Session } from '@auth/core/types';
+import { useQueryClient } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
 
 type Props = {
 	me: Session | null;
@@ -11,29 +13,34 @@ type Props = {
 
 export default function LogoutButton({ me }: Props) {
 	const router = useRouter();
-	// const { data: me } = useSession();
-	// const me = {
-	// 	// 임시로 내 정보 있는것처럼
-	// 	id: 'zerohch0',
-	// 	nickname: '제로초',
-	// 	image: '/5Udwvqim.jpg',
-	// };
+	const queryClient = useQueryClient();
+
+	const onLogout = () => {
+		// 로그아웃했을떄, 다 날려버려야, 마이페이지 접근 되는 것을 막음.
+		queryClient.invalidateQueries({
+			queryKey: ['posts'],
+		});
+		queryClient.invalidateQueries({
+			queryKey: ['users'],
+		});
+		signOut({ callbackUrl: '/' }).then(() => {
+			// clean cookie
+			fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/logout`, {
+				method: 'post',
+				credentials: 'include',
+			});
+			router.replace('/');
+		});
+	};
 
 	if (!me?.user) {
 		return null;
 	}
 
-	const onLogout = () => {
-		// 서버쪽 리다이렉트는 꺼줌.
-		signOut({ redirect: false });
-		router.replace('/');
-	};
-
 	return (
 		<button className={style.logOutButton} onClick={onLogout}>
 			<div className={style.logOutUserImage}>
-				{/* !붙이면 꼭 있다는 의미 as string 해줘도 무방 */}
-				<img src={me.user?.image!} alt={me.user?.email as string} />
+				<img src={me.user?.image as string} alt={me.user?.email as string} />
 			</div>
 			<div className={style.logOutUserName}>
 				<div>{me.user?.name}</div>
