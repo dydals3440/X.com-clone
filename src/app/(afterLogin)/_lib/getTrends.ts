@@ -4,6 +4,7 @@ export async function getTrends() {
 			tags: ['trends'],
 		},
 		cache: 'no-store',
+		// 무엇인가 정보를 내가 로그인 했다는 것을 알아야 할 경우, credentials: 'include' 설정
 		credentials: 'include',
 	});
 
