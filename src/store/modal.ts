@@ -3,7 +3,7 @@ import { Post } from '@/model/Post';
 
 interface ModalState {
 	mode: 'new' | 'comment';
-	data: Post;
+	data: Post | null;
 	setMode(mode: 'new' | 'comment'): void;
 	setData(data: Post): void;
 	reset(): void;
@@ -12,11 +12,9 @@ interface ModalState {
 export const useModalStore = create<ModalState>(set => ({
 	mode: 'new',
 	data: null,
-	// mode를 바꾸는 함수.
 	setMode(mode) {
 		set({ mode });
 	},
-	// data를 바꾸는 함수.
 	setData(data) {
 		set({ data });
 	},
