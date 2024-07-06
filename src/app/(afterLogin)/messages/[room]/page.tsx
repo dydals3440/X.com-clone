@@ -1,23 +1,36 @@
-import { faker } from '@faker-js/faker';
 import style from './chatRoom.module.css';
-import Link from 'next/link';
-import BackButton from '@/app/(afterLogin)/_component/BackButton';
-import cx from 'classnames';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/ko';
 import dayjs from 'dayjs';
+import MessageForm from '@/app/(afterLogin)/messages/[room]/_component/MessageForm';
+import { getUserServer } from '@/app/(afterLogin)/[username]/_lib/getUserServer';
+import { auth } from '@/auth';
+import { QueryClient } from '@tanstack/react-query';
+
+import React from 'react';
 import WebSocketComponent from '@/app/_component/WebSocketProvider';
-import Room from '../_component/Room';
+import { UserInfo } from '@/app/(afterLogin)/messages/[room]/_component/UserInfo';
 
 dayjs.locale('ko');
 dayjs.extend(relativeTime);
 
-export default function ChatRoom() {
-	const user = {
-		id: 'hero',
-		nickname: '영웅',
-		image: faker.image.avatar(),
-	};
+type Props = {
+	params: { room: string };
+};
+export default async function ChatRoom({ params }: Props) {
+	const session = await auth();
+	const queryClient = new QueryClient();
+	const ids = params.room.split('-').filter(v => v !== session?.user?.email);
+	// 상대방 아이디가 없으면 return null
+	if (!ids[0]) {
+		return null;
+	}
+	await queryClient.prefetchQuery({
+		// ids[0]을 상대방 정보를이런식으로 가져옴.
+		queryKey: ['users', ids[0]],
+		queryFn: getUserServer,
+	});
+
 	const messages = [
 		{
 			messageId: 1,
@@ -38,15 +51,10 @@ export default function ChatRoom() {
 	return (
 		<main className={style.main}>
 			<WebSocketComponent />
-			<div className={style.header}>
-				<h3>쪽지</h3>
-			</div>
-			<Room />
-			<Room />
-			<Room />
-			<Room />
-			<Room />
-			<Room />
+			{/*<MessageList />*/}
+			<UserInfo id={ids[0]} />
+			{/*<MessageList id={ids[0]} />*/}
+			<MessageForm id={ids[0]} />
 		</main>
 	);
 }

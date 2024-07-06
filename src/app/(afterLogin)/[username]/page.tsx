@@ -21,6 +21,17 @@ export async function generateMetadata({ params }: Props) {
 	return {
 		title: `${user.nickname} (${user.id})`,
 		description: `${user.nickname} (${user.id})`,
+		openGraph: {
+			title: `${user.nickname} (${user.id}) / Z`,
+			description: `${user.nickname} (${user.id})`, // 프로필
+			images: [
+				{
+					url: `https://z.nodebirde.com${user.image}`, // upload
+					width: 800,
+					height: 600,
+				},
+			],
+		},
 	};
 }
 
