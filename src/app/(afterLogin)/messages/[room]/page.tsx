@@ -10,6 +10,7 @@ import { QueryClient } from '@tanstack/react-query';
 import React from 'react';
 import WebSocketComponent from '@/app/_component/WebSocketProvider';
 import { UserInfo } from '@/app/(afterLogin)/messages/[room]/_component/UserInfo';
+import MessageList from '@/app/(afterLogin)/messages/[room]/_component/MessageList';
 
 dayjs.locale('ko');
 dayjs.extend(relativeTime);
@@ -21,12 +22,10 @@ export default async function ChatRoom({ params }: Props) {
 	const session = await auth();
 	const queryClient = new QueryClient();
 	const ids = params.room.split('-').filter(v => v !== session?.user?.email);
-	// 상대방 아이디가 없으면 return null
 	if (!ids[0]) {
 		return null;
 	}
 	await queryClient.prefetchQuery({
-		// ids[0]을 상대방 정보를이런식으로 가져옴.
 		queryKey: ['users', ids[0]],
 		queryFn: getUserServer,
 	});
@@ -51,9 +50,8 @@ export default async function ChatRoom({ params }: Props) {
 	return (
 		<main className={style.main}>
 			<WebSocketComponent />
-			{/*<MessageList />*/}
 			<UserInfo id={ids[0]} />
-			{/*<MessageList id={ids[0]} />*/}
+			<MessageList id={ids[0]} />
 			<MessageForm id={ids[0]} />
 		</main>
 	);

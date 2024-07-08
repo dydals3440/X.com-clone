@@ -15,7 +15,7 @@ export default async function Home() {
 	const rooms = session?.user?.email
 		? await getRooms(session?.user?.email)
 		: [];
-	console.log(rooms);
+	console.log(rooms, 'yaho');
 	return (
 		<main className={style.main}>
 			<div className={style.header}>

@@ -11,7 +11,6 @@ export const getUser: QueryFunction<User, [_1: string, _2: string]> = async ({
 			next: {
 				tags: ['users', username],
 			},
-			// getUser는 서버에서 실행할 떄, 페이지에서 프리페치 쿼리시 할 떄 서버에서 실행
 			credentials: 'include',
 			cache: 'no-store',
 		},

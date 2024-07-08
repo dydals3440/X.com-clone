@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Socket, io } from 'socket.io-client';
+import { useSession } from 'next-auth/react';
 
 // 커스텀 훅 간의 공유할 것들은 안티패턴 이용
 let socket: Socket | null;
 
 export default function useSocket(): [Socket | null, () => void] {
-	// const {data: session} = useSession();
+	const { data: session } = useSession();
 	const disconnect = useCallback(() => {
 		socket?.disconnect();
 		socket = null;
@@ -21,13 +22,6 @@ export default function useSocket(): [Socket | null, () => void] {
 				// Socket.io는 혹시나 웹소켓을 지원안할까봐 폴링도 함. 굳디 폴링안하고, 웹소켓만 쓰겠다임.
 				transports: ['websocket'],
 			});
-			// // 다른 프로토콜이기에 여기서 로그인 한번더
-			// socket.on('connect', () => {
-			// 	console.log('websocket connected');
-			// 	// if(session?.user?.email)
-			// 	// 백엔드에서 보내달라는 양식
-			// 	socket?.emit('login', 'session email');
-			// });
 			socket.on('connect_error', err => {
 				console.error(err);
 				console.log(`connect_error due to ${err.message}`);
@@ -35,11 +29,13 @@ export default function useSocket(): [Socket | null, () => void] {
 		}
 	}, []);
 
-	// useEffect(() => {
-	// 	if (socket?.connected && session?.user?.email) {
-	// 		socket?.emit('login', { id: session?.user?.email });
-	// 	}
-	// }, [session]);
+	// 연결맺는 순간에는 아이디가 없음.
+	// 소켓이 연결 맺으면서, 아래 값이 있는 경우, emit함
+	useEffect(() => {
+		if (socket?.connected && session?.user?.email) {
+			socket?.emit('login', { id: session?.user?.email });
+		}
+	}, [session]);
 
 	return [socket, disconnect];
 }

@@ -15,7 +15,6 @@ export async function getRooms(id: string) {
 	);
 	// The return value is *not* serialized
 	// You can return Date, Map, Set, etc.
-	console.log(res);
 
 	if (!res.ok) {
 		// This will activate the closest `error.js` Error Boundary
